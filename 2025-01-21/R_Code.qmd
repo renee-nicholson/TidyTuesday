@@ -1,0 +1,92 @@
+---
+title: "Code"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    embed-resources: true
+---
+
+
+```{r}
+library(tidyverse)
+library(viridis)
+```
+
+
+```{r}
+exped_tidy <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-01-21/exped_tidy.csv')
+peaks_tidy <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-01-21/peaks_tidy.csv')
+```
+
+```{r}
+full_data <- exped_tidy %>% 
+  left_join(peaks_tidy)
+```
+
+
+```{r}
+dim(exped_tidy)
+dim(peaks_tidy)
+dim(full_data)
+```
+ 
+
+
+want to look at oxygen use, 
+O2USED
+season_factor
+route1
+nation
+success1
+smtdays
+highpoint?
+totmembers
+heightm
+
+
+
+```{r}
+full_data %>% 
+  filter(SUCCESS1 == "TRUE") %>% 
+  group_by(NATION) %>% 
+  filter(n() > 10) %>% 
+  ggplot(aes(x = NATION, y = HEIGHTM)) +
+  geom_boxplot()
+```
+
+```{r}
+full_data %>% 
+  count(NATION) %>% 
+  filter(n > 10)
+```
+
+```{r}
+full_data %>% 
+  pivot_longer(col = c(SUCCESS1, SUCCESS2, SUCCESS3, SUCCESS4), names_to = "success #", values_to = "success")
+```
+
+
+
+```{r, fig.alt= "This visualization is a scatter plot of days it took to successfully summit a peak based on peak height and season. The highest peak."}
+full_data %>% 
+  pivot_longer(col = c(SUCCESS1, SUCCESS2, SUCCESS3, SUCCESS4), names_to = "success #", values_to = "success") %>%
+  filter(success == "TRUE") %>% 
+  ggplot(aes(x = SMTDAYS, y = HEIGHTM, color = SEASON_FACTOR)) +
+  geom_point() + scale_color_viridis_d() +
+  labs(x = "Days to Reach Summit", y = "Peak Height in Meters", color = "Season", title = "Successful Summit Times Based on Height and Season")
+```
+
+```{r}
+full_data %>% 
+  filter(SUCCESS1 == "TRUE") %>% 
+  ggplot(aes(x = HIGHPOINT, fill = O2USED)) +
+  geom_histogram() + scale_color_viridis_d()
+```
+
+```{r}
+full_data %>% 
+  arrange(desc(HEIGHTM))
+```
+
+

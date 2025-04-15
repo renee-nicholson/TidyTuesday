@@ -13,7 +13,7 @@ library(tidyverse)
 library(ggrepel)
 care_state <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-04-08/care_state.csv')
 
-care_state %>% 
+plot <- care_state %>% 
   group_by(state) %>% 
   filter(measure_id %in% c("HCP_COVID_19", "IMM_3")) %>% 
   pivot_wider(names_from = measure_id, values_from = score, id_cols = state) %>% 
@@ -28,11 +28,15 @@ care_state %>%
     max.overlaps = Inf
   ) +
   theme_minimal() +
-  labs(title = "Percentage of Workers Up to Date on Influenza and COVID-19 Vaccinations", color = "Height Category") +
+  labs(title = "Percentage of Workers Up to Date on Influenza and COVID-19 Vaccinations by State", color = "Height Category") +
   xlab("Percentage of Workers Up to Date with COVID-19 Vaccinations") +
   ylab("Percentage of Workers Given Influenza Vaccinations") +
   theme(axis.text.x = element_text(size = 7),
         axis.text.y = element_text(size = 7),
-        plot.title = element_text(size = 11))
+        plot.title = element_text(size = 11)) 
+
+plot
+
+ggsave("vaccination_plot.png", plot = plot, width = 8, height = 6, dpi = 300)
 ```
 

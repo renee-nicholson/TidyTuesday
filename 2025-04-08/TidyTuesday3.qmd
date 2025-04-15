@@ -1,0 +1,38 @@
+---
+title: "Tidy Tuesday 3"
+editor: visual
+author: Renee Nicholson
+format: 
+  html:
+    embed-resources: true
+---
+
+
+```{r, fig.cap= "A scatter plot displaying the percentages of healthcare workers up to date on COVID-19 and flu vaccinations in 2023-2024, by state."}
+library(tidyverse)
+library(ggrepel)
+care_state <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-04-08/care_state.csv')
+
+care_state %>% 
+  group_by(state) %>% 
+  filter(measure_id %in% c("HCP_COVID_19", "IMM_3")) %>% 
+  pivot_wider(names_from = measure_id, values_from = score, id_cols = state) %>% 
+  ggplot(aes(x = HCP_COVID_19, y = IMM_3)) +
+  geom_point() +
+  geom_text_repel(aes(label = state),
+    box.padding = 0.5,
+    point.padding = 0.2,
+    segment.color = "gray40",
+    segment.size = 0.5,
+    force = 1,
+    max.overlaps = Inf
+  ) +
+  theme_minimal() +
+  labs(title = "Percentage of Workers Up to Date on Influenza and COVID-19 Vaccinations", color = "Height Category") +
+  xlab("Percentage of Workers Up to Date with COVID-19 Vaccinations") +
+  ylab("Percentage of Workers Given Influenza Vaccinations") +
+  theme(axis.text.x = element_text(size = 7),
+        axis.text.y = element_text(size = 7),
+        plot.title = element_text(size = 11))
+```
+
